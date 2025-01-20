@@ -16,7 +16,7 @@ The lack of successful reparations and the low lexical entropy of our corpus may
 
 Some heuristics that precisely clusters `Successful` applications can be found by splitting positive (patchable, +) and negative (not patchable, -) labels.
 
-|index|Feature|COUNT|Patchable \(+\)|Not Patchable \(-\)|Values Excluded in \(+\)|
+|index|Feature|Unique Values|Patchable \(+\)|Not Patchable \(-\)|Values Excluded in \(+\)|
 |---|---|---|---|---|---|
 |5|Severe\_Corrosion|2|1|2|True|
 |6|Pipe\_Covered|2|1|2|True|
@@ -30,7 +30,7 @@ Some heuristics that precisely clusters `Successful` applications can be found b
 |2|Pipe\_Material|6|6|6|None|
 |4|Pipe\_Exposure|3|3|3|None|
 
-Patchable faults do not show _damaged valve_, _high pressure_ or _severe corrosion_. Furtherly, there is nor the presence of a _wall_ s nearby patchable damages, nor _ribs_ or _branches_. Moreover, exploring `damage_type`, one can notice that whenever the fault is about _sheared linear lesions_ or _deformations in axial directions_, the attempt to fix the damage by patch was _not successful_. Our goal is to test the capability of a chatbot to address the patchability of a gas fault. For this reaso, we **did not** provide heuristics in the prompt. Indeed, the idea is to create a systems that updates with company experience: heuristics may change as the technology improves. 
+Patchable faults do not show _damaged valve_, _high pressure_ or _severe corrosion_. Furtherly, there is nor the presence of a _wall_ s nearby patchable damages, nor _ribs_ or _branches_. Moreover, exploring `damage_type`, one can notice that whenever the fault is about _sheared linear lesions_ or _deformations in axial directions_, the attempt to fix the damage by patch was _not successful_. Our goal is to test the capability of a chatbot to address the patchability of a gas fault. For this reason, we **did not** provide heuristics in the prompt. Indeed, the idea is to create a systems that updates with company experience: heuristics may change as the technology improves. 
 
 We augmented the cardinality of the dataset by further generating:
 - `[model_name]-Explanation`: description written by Llama3.2 and Mistral when provided with pairs (`Summary`,`Successful`) and asked to explain the outcome (i.e. _repairable_ or not). This will be used to compare the description generated when the model knows about the label vs when the model is asked to infer the label;
