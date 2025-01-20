@@ -54,7 +54,7 @@ _non-patchable_ (-) :
 
 Is worth to notice that summaries **does not mention** whether the damage had been successfully repaired or not.
 
-We claim that tabular origin and  task-specificity make the corpus' vocabulary small. To prove our hypothesis, we compare `Summary` with a general-purpose corpus such as Common Crawl.  We sample _n = |`Summary`|_ documents from Common Crawl - News (CC-News) to prove our hypothesis.  We are interested in quantify the level of _ lexical diversity_ within corpora. To do so, we define **lexical entropy** of a corpus D having vocabulary $V_D$ as follows:
+We claim that tabular origin and  task-specificity make the corpus' vocabulary small. To prove our hypothesis, we compare `Summary` with a general-purpose corpus such as Common Crawl.  We sample _n = |`Summary`|_ documents from [Common Crawl - News](https://huggingface.co/datasets/vblagoje/cc_news) (CC-News) to prove our hypothesis.  We are interested in quantify the level of _ lexical diversity_ within corpora. To do so, we define **lexical entropy** of a corpus D having vocabulary $V_D$ as follows:
 
 $$H(D) = -\sum_{t \in V_D}p_tlog(p_t) =  \sum_{t \in V_D} idf(t,D)e^{-idf(t,D)}$$, 
 $$p_t = \frac{|\{d \in D, d :  t \in d\}|}{|D|} = e^{-idf(t,D)}$$
@@ -70,3 +70,55 @@ Results in the table below confirms our intuition: the diversity in CC-News is 1
 |H\(D\)|346|42\.4|
 
 ## Retrieval System
+We test 7 different embedding models. We average `Precision@k` (P@k)s to evaluate the capability of a model to shape our space. 
+
+### Precision@k Formula
+
+The Precision@k metric calculates the proportion of relevant items in the top-`k` retrieved items for a query q.
+$$
+P_{@k}(q) = \frac{|\{(x,y) \in k_{NN}(q): y = y_q\}|}{k}
+$$
+
+Where:
+- q is the query;
+- $y_{q}$ is query's label, 
+- k is the number of retrieved items;
+-  $k_{NN}$ is the set of k-nearest neighbors to q;
+- We define an element _x_ in the k-neighborhood relevant if it shares the label with the query.
+
+We average this value for each query in the test set (Q) to score our models.
+
+| Precision@k         | multi-qa-mpnet-base-dot-v1 | multi-qa-mpnet-base-cos-v1 | multi-qa-distilbert-cos-v1 | multi-qa-MiniLM-L6-cos-v1 | stsb-roberta-large | all-MiniLM-L6-v2 | bert-base-nli-mean-tokens |
+|----------------|-----------------------------|-----------------------------|-----------------------------|---------------------------|--------------------|-------------------|---------------------------|
+| **@1** | 0.00 | 0.04| 0.04 | 0.04|0.16| 0.04 | **0.36**|
+| **@3** | 0.01| 0.01| 0.04| 0.013| 0.06| 0.05| <ins>0.25</ins>|
+| **@5** | 0.02| 0.03| 0.03| 0.02| 0.06| 0.05| <ins>0.2</ins>|
+| **@7** | 0.03| 0.01| 0.02| 0.02| 0.07| 0.03|<ins>0.22</ins>|
+Where similarity was computed through dot product <q,x>.
+
+[bert-base-nli-mean-tokens](https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens) outstand. This result contrasts [SBERT](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html) community results: while _bert-base-nli-mean-tokens_  model is declared to be _deprecated_, models such as [multi-qa-mpnet-base-dot-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1) are top-scoring in Semantic Search.
+
+We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**). 
+
+Furthermore, the **784-dim** of _bert-base-nli-mean-tokens_ appears to beat _stsb-roberta-large 1024s_ (higher) and 384-dim of all-MiniLMs (384-dim).
+
+Then, we investigate the best similarity/distance scores:
+Precision@k (+)es:
+| Precision@k  | IP  | COS | L2-UNSCALED | L2-SCALED |
+|----------------|-----|-----|-------------|-----------|
+| @1        | **0.36** | 0.24 | 0.24        | 0.24      |
+| @3       | <ins>0.25</ins> | 0.16 | 0.16        | 0.16      |
+| @5        | <ins>0.22</ins> | 0.14 | 0.13        | 0.14      |
+| @7        | <ins>0.23</ins> | 0.14 | 0.11        | 0.14      |
+
+
+Precision@k (-)es:
+| Precision@k        | IP  | COS | L2-UNSCALED | L2-SCALED |
+|----------------|-----|-----|-------------|-----------|
+| @1        | 0.99 | 0.99 | **1.0**         | 0.99      |
+| @3        | 0.98 | 0.99 | 0.99        | 0.99      |
+| @5        | 0.98 | **1.0**  | 0.99        | **1.0**       |
+| @7        | 0.98 | **1.0**  | **1.0**         | **1.0**       |
+
+
+Therefore, to represent our corpus we choose **_bert-base-nli-mean-tokens_** as embedding model and the **_dot product_** similarity score.
