@@ -1,4 +1,4 @@
-# Retrieval-Augmented Generation on a Synthetic Domain-Specific Corpus about Gas Pipes Repairs Through Patching.
+# Retrieval-Augmented Generation on a Synthetic Domain-Specific Corpus about Gas Pipes Repairs.
 ``
 
 In this work, we explore Retrieval-Augmented Generation (*RAG*)  on a synthetic-domain specific corpus.
