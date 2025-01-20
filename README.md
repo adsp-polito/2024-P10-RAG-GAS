@@ -60,9 +60,12 @@ $$H(D) = -\sum_{t \in V_D}p_tlog(p_t) =  \sum_{t \in V_D} idf(t,C)e^{-idf(t,D)}$
 
 Results in the table below confirms our intuition: the diversity in CC-News is 10 times larger than our corpus. 
 
-|metric|CC-News|Gas-Pipe-Repairs|
+|metrics|common\_crawl\_downsampled|gas|
 |---|---|---|
 |&#124;V&#124;|101993|2556|
 |&#124;D&#124;|11904|11904|
-|avg\(idf\(t,D\)\)|8\.92|7\.95|
-|H\(D\)|346|42|
+|avg\_d\_length|395|70|
+|avg\_idf|8\.92|7\.95|
+|H\(D\)|346|42\.4|
+
+## Retrieval System
