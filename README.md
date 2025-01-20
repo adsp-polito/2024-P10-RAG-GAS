@@ -16,21 +16,21 @@ The lack of successful reparations and the low lexical entropy of our corpus may
 
 Some heuristics that precisely clusters `Successful` applications can be found by splitting positive (patchable, +) and negative (not patchable, -) labels.
 
-|index|Feature|COUNT|+|-|Excluded in +|
+|index|Feature|COUNT|Patchable \(+\)|Not Patchable \(-\)|Values Excluded in \(+\)|
 |---|---|---|---|---|---|
-|0|Kit\_Size\_num|5|5|5||
-|1|Pipe\_In\_Bad\_Conditions|2|2|2||
-|2|Pipe\_Material|6|6|6||
-|3|Damage\_Type|11|9|11|Sheared linear lesion,Visible deformation in axial direction|
-|4|Pipe\_Exposure|3|3|3||
 |5|Severe\_Corrosion|2|1|2|True|
 |6|Pipe\_Covered|2|1|2|True|
 |7|Branch\_Near\_Fault|2|1|2|True|
 |8|High\_Pressure|2|1|2|True|
 |9|Damaged\_Valve|2|1|2|True|
 |10|Ribs|2|1|2|True|
+|3|Damage\_Type|11|9|11|Sheared linear lesion,Visible deformation in axial direction|
+|0|Kit\_Size\_num|5|5|5|None|
+|1|Pipe\_In\_Bad\_Conditions|2|2|2|None|
+|2|Pipe\_Material|6|6|6|None|
+|4|Pipe\_Exposure|3|3|3|None|
 
-As one can see above, none of the patchable faults shares problems of _damaged valve_, _high pressure_ or _severe corrosion_. Furtherly, there is nor the presence of a _wall_ s nearby patchable damages, nor _ribs_ or _branches_. Moreover, exploring `damage_type`, one can notice that whenever the fault is about _sheared linear lesions_ or _deformations in axial directions_, the attempt to fix the damage by patch was _not successful_. Our goal is to test the capability of a chatbot to address the patchability of a gas fault. For this reaso, we **did not** provide heuristics in the prompt. Indeed, the idea is to create a systems that updates with company experience: heuristics may change as the technology improves. 
+Patchable faults do not show _damaged valve_, _high pressure_ or _severe corrosion_. Furtherly, there is nor the presence of a _wall_ s nearby patchable damages, nor _ribs_ or _branches_. Moreover, exploring `damage_type`, one can notice that whenever the fault is about _sheared linear lesions_ or _deformations in axial directions_, the attempt to fix the damage by patch was _not successful_. Our goal is to test the capability of a chatbot to address the patchability of a gas fault. For this reaso, we **did not** provide heuristics in the prompt. Indeed, the idea is to create a systems that updates with company experience: heuristics may change as the technology improves. 
 
 We augmented the cardinality of the dataset by further generating:
 - `[model_name]-Explanation`: description written by Llama3.2 and Mistral when provided with pairs (`Summary`,`Successful`) and asked to explain the outcome (i.e. _repairable_ or not). This will be used to compare the description generated when the model knows about the label vs when the model is asked to infer the label;
@@ -39,6 +39,19 @@ We augmented the cardinality of the dataset by further generating:
 ### RAG Database (DB) and Query Set (Q) split
 Due to (-)es bias, we split DB/Q in a stratified fashion. Therefore, we create from DATA two sub-groups, namely (-)es and (+)es, then we take the 80% of each group ( 80% of not patchable items, 80% of patchable items) for DB and leave the 20% Q.
 
-Due to CoLab time-limitations, we are forced to downsample the query test: while selecting the totality of patchable damages in the query set (i.e. #25 cases), we downsample to #100 the number of non-patchable items. Therefore, **all tests in this work had run on #125 examples (#25 (+), #100 (-)), excluded from DB**. We leave an exahustive evaluation of Q for future works. 
+Due to CoLab time-limitations, we are forced to downsample the query test: while selecting the totality of patchable damages in the query set (i.e. #25 cases), we downsample to #100 the number of non-patchable items. Therefore, **all tests in this work had run on #125 examples (#25 (+), #100 (-)), excluded from DB**. We leave an exhaustive evaluation of Q for future works. 
 
+## Corpus
+Descriptions of gas pipe faults make up our corpus (features `Summary` and `italian_Summary`).
 
+_patchable_ (+) `:
+
+    A galvanized nipple fault has occurred in an aerial pipe due to incorrect installation techniques. The joint was improperly tightened during assembly, which led to excessive flexing and eventually caused the connection point between the two pipes to fail. This resulted in the failure of the entire system and caused significant damage to surrounding components.
+
+_non-patchable_ (-) :
+
+    Sheared linear lesion at user connections, polyethylene material, no strong corrosion, and no high-pressure in the pipe. There is a branch near the break, but the pipe is not covered by a wall and does not have any valves nearby. No ribs are present.
+
+Is worth to notice that summaries **does not mention** whether the damage had been successfully repaired or not.
+
+We claim that, given the tabular origin, corpus' vocabulary is relatively small. To prove our hypothesis, we compare 
