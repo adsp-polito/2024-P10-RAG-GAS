@@ -56,7 +56,7 @@ Is worth to notice that summaries **does not mention** whether the damage had be
 
 We claim that tabular origin and  task-specificity make the corpus' vocabulary small. To prove our hypothesis, we compare `Summary` with a general-purpose corpus such as Common Crawl.  We sample _n = |`Summary`|_ documents from [Common Crawl - News](https://huggingface.co/datasets/vblagoje/cc_news) (CC-News) to prove our hypothesis.  We are interested in quantify the level of _ lexical diversity_ within corpora. To do so, we define **lexical entropy** of a corpus D having vocabulary $V_D$ as follows:
 
-$$H(D) = -\sum_{t \in V_D}p_tlog(p_t) =  \sum_{t \in V_D} idf(t,D)e^{-idf(t,D)}$$, 
+$$H(D) = -\sum_{t \in V_D}p_tlog(p_t) =  \sum_{t \in V_D} idf(t,D)e^{-idf(t,D)}$$
 $$p_t = \frac{|\{d \in D, d :  t \in d\}|}{|D|} = e^{-idf(t,D)}$$
 
 Results in the table below confirms our intuition: the diversity in CC-News is 10 times larger than our corpus. 
@@ -94,6 +94,7 @@ We average this value for each query in the test set (Q) to score our models.
 | **@3** | 0.01| 0.01| 0.04| 0.013| 0.06| 0.05| <ins>0.25</ins>|
 | **@5** | 0.02| 0.03| 0.03| 0.02| 0.06| 0.05| <ins>0.2</ins>|
 | **@7** | 0.03| 0.01| 0.02| 0.02| 0.07| 0.03|<ins>0.22</ins>|
+
 Where similarity was computed through dot product <q,x>.
 
 [bert-base-nli-mean-tokens](https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens) outstand. This result contrasts [SBERT](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html) community results: while _bert-base-nli-mean-tokens_  model is declared to be _deprecated_, models such as [multi-qa-mpnet-base-dot-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1) are top-scoring in Semantic Search.
