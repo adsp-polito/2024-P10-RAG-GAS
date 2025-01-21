@@ -1,7 +1,14 @@
 # Retrieval-Augmented Generation on a Synthetic Domain-Specific Corpus about Gas Pipes Repairs.
 ``
-
 In this work, we explore Retrieval-Augmented Generation (*RAG*)  on a synthetic-domain specific corpus.
+
+## Introduction
+
+## Related work
+- something on RAG
+- something on specific domains
+- brief descriptions of embedding models tested (comes useful while showing results)
+- something about Mistral and Llama3.2 ability to deal with other languages (?)
 
 ## Data
 Data regards damaged gas pipe repaired through Patch Madflex®, a new material developed by Composite Research (CoRe) and tested by ItalGas.
@@ -75,9 +82,7 @@ We test 7 different embedding models. We average `Precision@k` (P@k)s to evaluat
 ### Precision@k Formula
 
 The Precision@k metric calculates the proportion of relevant items in the top-`k` retrieved items for a query q.
-$$
-P_{@k}(q) = \frac{|\{(x,y) \in k_{NN}(q): y = y_q\}|}{k}
-$$
+$$P_{k}(q) = \frac{|\{(x,y) \in k_{NN}(q): y = y_q\}|}{k}$$
 
 Where:
 - q is the query;
@@ -99,9 +104,14 @@ Where similarity was computed through dot product <q,x>.
 
 [bert-base-nli-mean-tokens](https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens) outstand. This result contrasts [SBERT](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html) community results: while _bert-base-nli-mean-tokens_  model is declared to be _deprecated_, models such as [multi-qa-mpnet-base-dot-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1) are top-scoring in Semantic Search.
 
-We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**). 
+We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**). To prove our intuition, we compute the average point-wise distance in a _n=1000_ size sample of DB for both bert and multi-qa-mpnet. Results shows that embeddings are less similar when mean pooling is used as strategy in both cases.
 
-Furthermore, the **784-dim** of _bert-base-nli-mean-tokens_ appears to beat _stsb-roberta-large 1024s_ (higher) and 384-dim of all-MiniLMs (384-dim).
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/dfdd5c5d-1fd4-4db9-8208-01f56daa347e" alt="Image 1" width="500"/>
+  <img src="https://github.com/user-attachments/assets/cd5620be-cc4f-4336-b5a5-e4620ff4f43b" alt="Image 2" width="500"/>
+</p>
+
+Furthermore, the **784-dim** of _bert-base-nli-mean-tokens_ appears to suit best our corups (_stsb-roberta-large_ embeds in 1024, while 384 is the dimentionality of all-MiniLMs).
 
 Then, we investigate the best similarity/distance scores:
 Precision@k (+)es:
@@ -120,6 +130,5 @@ Precision@k (-)es:
 | @3        | 0.98 | 0.99 | 0.99        | 0.99      |
 | @5        | 0.98 | **1.0**  | 0.99        | **1.0**       |
 | @7        | 0.98 | **1.0**  | **1.0**         | **1.0**       |
-
 
 Therefore, to represent our corpus we choose **_bert-base-nli-mean-tokens_** as embedding model and the **_dot product_** similarity score.
