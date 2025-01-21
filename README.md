@@ -93,7 +93,7 @@ Where:
 
 We average this value for each query in the test set (Q) to score our models.
 
-| Precision@k         | multi-qa-mpnet-base-dot-v1 | multi-qa-mpnet-base-cos-v1 | multi-qa-distilbert-cos-v1 | multi-qa-MiniLM-L6-cos-v1 | stsb-roberta-large | all-MiniLM-L6-v2 | bert-base-nli-mean-tokens |
+| Precision(+)@k      | multi-qa-mpnet-base-dot-v1 | multi-qa-mpnet-base-cos-v1 | multi-qa-distilbert-cos-v1 | multi-qa-MiniLM-L6-cos-v1 | stsb-roberta-large | all-MiniLM-L6-v2 | bert-base-nli-mean-tokens |
 |----------------|-----------------------------|-----------------------------|-----------------------------|---------------------------|--------------------|-------------------|---------------------------|
 | **@1** | 0.00 | 0.04| 0.04 | 0.04|0.16| 0.04 | **0.36**|
 | **@3** | 0.01| 0.01| 0.04| 0.013| 0.06| 0.05| <ins>0.25</ins>|
@@ -104,12 +104,7 @@ Where similarity was computed through dot product <q,x>.
 
 [bert-base-nli-mean-tokens](https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens) outstand. This result contrasts [SBERT](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html) community results: while _bert-base-nli-mean-tokens_  model is declared to be _deprecated_, models such as [multi-qa-mpnet-base-dot-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1) are top-scoring in Semantic Search.
 
-We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**). To prove our intuition, we compute the average point-wise distance in a _n=1000_ size sample of DB for both bert and multi-qa-mpnet. Results shows that embeddings are less similar when mean pooling is used as strategy in both cases.
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/dfdd5c5d-1fd4-4db9-8208-01f56daa347e" alt="Image 1" width="500"/>
-  <img src="https://github.com/user-attachments/assets/cd5620be-cc4f-4336-b5a5-e4620ff4f43b" alt="Image 2" width="500"/>
-</p>
+We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**).
 
 Furthermore, the **784-dim** of _bert-base-nli-mean-tokens_ appears to suit best our corups (_stsb-roberta-large_ embeds in 1024, while 384 is the dimentionality of all-MiniLMs).
 
