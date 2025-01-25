@@ -1,14 +1,24 @@
 # Retrieval-Augmented Generation on a Domain-Specific Corpus about Gas Pipes Repairs.
-``
-In this work, we explore Retrieval-Augmented Generation (*RAG*)  on a synthetic-domain specific corpus.
+_Abstract_ (to be completed)
+
+Retrieval-Augmented Generation (RAG) has demonstrated its effectiveness in tasks requiring precise information retrieval combined with text generation. This paper investigates its application in low lexicon variety settings, where document vocabularies are highly similar across the corpus. Using a dataset of synthetic damage descriptions for gas pipe repairs, we explore how RAG can address the classification of patchable versus non-patchable damages. Our methodology formalizes lexicon diversity and introduces a novel document representation model tailored to low-entropy corpora.
 
 ## Introduction
+The objective of this study is to explore the application of Retrieval-Augmented Generation (RAG) models in scenarios characterized by low lexical variety. Specifically, we aim to develop a chatbot to assist gas fitters in determining the applicability of Patch Madflex® for gas pipe repairs, leveraging historical case data. This task focuses on classifying textual descriptions of gas pipe damage as repairable or not, employing foundational models without fine-tuning to evaluate their capability to support real-world tasks using pre-trained knowledge.
 
-## Related work
-- something on RAG
-- something on specific domains
-- brief descriptions of embedding models tested (comes useful while showing results)
-- something about Mistral and Llama3.2 ability to deal with other languages (?)
+The dataset provided by Corporate Research (CoRe) consists of synthetic descriptions derived from tabular data, resulting in a corpus with a high degree of similarity among documents, where vocabulary often mirrors the names of original tabular features. To characterize this phenomenon, we introduce a metric for lexical variety, which quantifies the entropy of the corpus' vocabulary.
+
+Foundation models that are specialized in Semantic Textual Similarity (STS) and are often used in RAG systems may not perform as effectively when all the documents fall within the same semantic sphere, as is the case in our corpus. In our dataset, the documents tend to be highly semantically similar, which makes traditional STS models less effective. Instead, our corpus appears to align better with a Natural Language Inference (NLI) task, where the model must retrieve documents that either confirm or contradict a given query. This alignment with NLI tasks suggests that using models trained for NLI could be more appropriate for this domain.
+
+Among the foundation models trained for NLI, the way the model encodes the final hidden layer plays a crucial role. Specifically, the choice of pooling strategy (e.g., mean pooling) directly affects how tokens associated with specific features in the tabular data are incorporated into the document embeddings. We hypothesize that a more refined pooling strategy—such as treating structured features as distinct contributions to the document vector—may improve performance in low-lexical-variety settings. In this work, we benchmark the superiority of MEAN over CLS pooling for collections where documents exhibit minimal variability in lexical content, as an initial step toward developing a learnable pooling function.
+
+To evaluate the effectiveness of embedding models for information retrieval in scenarios like ours, we assess their ability to retrieve documents from a set of k examples that are semantically similar to the query document $d_q$. To this end, we employ a K-Nearest Neighbors (KNN) retrieval system, which helps identify the most effective combinations of encoder models and similarity metrics. The KNN approach enables us to capture domain-specific nuances in the dataset and refine our retrieval methodology.
+Among the encoder models tested, BERT base demonstrates the best performance. 
+
+Our corpus presents two main challenges: (1) a significant class imbalance, with only 1\% of damage descriptions labeled as repairable, and (2) low lexical diversity, which complicates both the classification and retrieval tasks. To address these challenges, we propose a novel method called positive explosion. This method adjusts the dataset by treating positive instances (i.e., repairable damage descriptions) as cluster centers and selectively down-sampling nearby negative examples. This strategy increases the likelihood that positive examples are presented to the large language models (LLMs), improving the model's ability to learn from these more informative instances.
+
+Finally, damage classification is performed using Retrieval-Augmented Generation (RAG) , a framework that integrates retrieval and generative components. This approach enables the model to not only make predictions but also generate explanations for patch applicability. We anticipate that this method will outperform the baseline established during the embedding model selection phase, enhancing the pipeline's overall utility in low-lexical-variety settings.
+
 
 ## Data
 Data regards damaged gas pipe repaired through Patch Madflex®, a new material developed by Composite Research (CoRe) and tested by ItalGas.
@@ -75,55 +85,3 @@ Results in the table below confirms our intuition: the diversity in CC-News is 1
 |avg\_d\_length|395|70|
 |avg\_idf|8\.92|7\.95|
 |H\(D\)|346|42\.4|
-
-## Retrieval System
-We test 7 different embedding models. We average `Precision@k` (P@k)s to evaluate the capability of a model to shape our space. 
-
-### Precision@k Formula
-
-The Precision@k metric calculates the proportion of relevant items in the top-`k` retrieved items for a query q.
-$$P_{k}(q) = \frac{|\{(x,y) \in k_{NN}(q): y = y_q\}|}{k}$$
-
-Where:
-- q is the query;
-- $y_{q}$ is query's label, 
-- k is the number of retrieved items;
--  $k_{NN}$ is the set of k-nearest neighbors to q;
-- We define an element _x_ in the k-neighborhood relevant if it shares the label with the query.
-
-We average this value for each query in the test set (Q) to score our models.
-
-| Precision(+)@k      | multi-qa-mpnet-base-dot-v1 | multi-qa-mpnet-base-cos-v1 | multi-qa-distilbert-cos-v1 | multi-qa-MiniLM-L6-cos-v1 | stsb-roberta-large | all-MiniLM-L6-v2 | bert-base-nli-mean-tokens |
-|----------------|-----------------------------|-----------------------------|-----------------------------|---------------------------|--------------------|-------------------|---------------------------|
-| **@1** | 0.00 | 0.04| 0.04 | 0.04|0.16| 0.04 | **0.36**|
-| **@3** | 0.01| 0.01| 0.04| 0.013| 0.06| 0.05| <ins>0.25</ins>|
-| **@5** | 0.02| 0.03| 0.03| 0.02| 0.06| 0.05| <ins>0.2</ins>|
-| **@7** | 0.03| 0.01| 0.02| 0.02| 0.07| 0.03|<ins>0.22</ins>|
-
-Where similarity was computed through dot product <q,x>.
-
-[bert-base-nli-mean-tokens](https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens) outstand. This result contrasts [SBERT](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html) community results: while _bert-base-nli-mean-tokens_  model is declared to be _deprecated_, models such as [multi-qa-mpnet-base-dot-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-dot-v1) are top-scoring in Semantic Search.
-
-We claim that the reason of these results lies in the low lexical entropy of our corpus: models that uses CLS Pooling can't capture differences as models that use as sentence representation the average token embeddings (**mean pooling**).
-
-Furthermore, the **784-dim** of _bert-base-nli-mean-tokens_ appears to suit best our corups (_stsb-roberta-large_ embeds in 1024, while 384 is the dimentionality of all-MiniLMs).
-
-Then, we investigate the best similarity/distance scores:
-Precision@k (+)es:
-| Precision@k  | IP  | COS | L2-UNSCALED | L2-SCALED |
-|----------------|-----|-----|-------------|-----------|
-| @1        | **0.36** | 0.24 | 0.24        | 0.24      |
-| @3       | <ins>0.25</ins> | 0.16 | 0.16        | 0.16      |
-| @5        | <ins>0.22</ins> | 0.14 | 0.13        | 0.14      |
-| @7        | <ins>0.23</ins> | 0.14 | 0.11        | 0.14      |
-
-
-Precision@k (-)es:
-| Precision@k        | IP  | COS | L2-UNSCALED | L2-SCALED |
-|----------------|-----|-----|-------------|-----------|
-| @1        | 0.99 | 0.99 | **1.0**         | 0.99      |
-| @3        | 0.98 | 0.99 | 0.99        | 0.99      |
-| @5        | 0.98 | **1.0**  | 0.99        | **1.0**       |
-| @7        | 0.98 | **1.0**  | **1.0**         | **1.0**       |
-
-Therefore, to represent our corpus we choose **_bert-base-nli-mean-tokens_** as embedding model and the **_dot product_** similarity score.
