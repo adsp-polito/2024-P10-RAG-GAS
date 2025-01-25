@@ -23,21 +23,27 @@ Finally, damage classification is performed using Retrieval-Augmented Generation
 Our goal is to define a metric that capures how much the lexicon variates across documents d in a corpus D.
 
 A document can be seen as a collection of terms:
-$$ d = \{t_1,t_2, ... t_n\}$$
+
+$$d = \{t_1,t_2, ... t_n\}$$
 
 The vocabulary of a corpus is then made by all different terms that appear in D:
+
 $$V_D = \{t_1,...,t_n\}$$
 
 Let $p(t)$ be the probability of find $t$ in a document d:
-$$ p(t) := \frac{|\{d \in D: t \in d\}|}{|D|} $$
+
+$$p(t) := \frac{|\{d \in D: t \in d\}|}{|D|}$$
 
 The information content of t according to Shannon is:
+
 $$I(t) = \log_2\left(\frac{1}{p(t)}\right)$$
 
-Under the assumption that finding $x \in d$ does not influence the presence of $y \in d$:
+Under the (although strong in linguistic) assumption that finding $x \in d$ does not influence the presence of $y \in d$:
+
 $$I(\{x,y\}) = \log_2\left(\frac{1}{p(x,y)}\right) = \log_2\left(\frac{1}{p(x)}\frac{1}{p(y)}\right) = \log\left(\frac{1}{p(x)}\right) + \log\left(\frac{1}{p(y)}\right)$$
 
-We define **lexicon variety** as the expected information content corpus' vocabulary:
+We define **lexicon variety** as the expected vocabulary's information content in a corpus D:
+
 $$L(V_D) := E[I(V_D)] =  \sum_{t \in V}p(t) \log_{2}\left(\frac{1}{p(t)}\right)$$
 
 - if a term appears in _all_ documents, it's contribute is 0;
