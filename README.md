@@ -19,6 +19,50 @@ Our corpus presents two main challenges: (1) a significant class imbalance, with
 
 Finally, damage classification is performed using Retrieval-Augmented Generation (RAG) , a framework that integrates retrieval and generative components. This approach enables the model to not only make predictions but also generate explanations for patch applicability. We anticipate that this method will outperform the baseline established during the embedding model selection phase, enhancing the pipeline's overall utility in low-lexical-variety settings.
 
+## Lexical Variety.
+Our goal is to define a metric that capures how much the lexicon variates across documents d in a corpus D.
+
+A document can be seen as a collection of terms:
+$$ d = \{t_1,t_2, ... t_n\}$$
+
+The vocabulary of a corpus is then made by all different terms that appear in D:
+$$V_D = \{t_1,...,t_n\}$$
+
+Let $p(t)$ be the probability of find $t$ in a document d:
+$$ p(t) := \frac{|\{d \in D: t \in d\}|}{|D|} $$
+
+The information content of t according to Shannon is:
+$$I(t) = \log_2\left(\frac{1}{p(t)}\right)$$
+
+Under the assumption that finding $x \in d$ does not influence the presence of $y \in d$:
+$$I(\{x,y\}) = \log_2\left(\frac{1}{p(x,y)}\right) = \log_2\left(\frac{1}{p(x)}\frac{1}{p(y)}\right) = \log\left(\frac{1}{p(x)}\right) + \log\left(\frac{1}{p(y)}\right)$$
+
+We define **lexicon variety** as the expected information content corpus' vocabulary:
+$$L(V_D) := E[I(V_D)] =  \sum_{t \in V}p(t) \log_{2}\left(\frac{1}{p(t)}\right)$$
+
+- if a term appears in _all_ documents, it's contribute is 0;
+- if a term does not appear in the collection, it's contribute is also 0;
+- the maximum value is proportional to the length of the vocabulary;
+- the more a term belongs to a smaller subset of D, the more it contributes to I(V)
+
+## NLI over STS
+-> to be filled. 
+
+## Pooling Matters.
+In corpora where the vocabulary remains constant across documents, we hypothesize that a document $\vec{d}$ of length $t$ can be expressed as:  
+$$
+\vec{d} = \alpha \vec{\text{CLS}} + \sum_{i=1}^{F}\beta_i \vec{e}_i + \sum_{j=1}^{t-F-1}\gamma_j \vec{r}_j,
+$$   where:  
+- $\vec{\text{CLS}}$: encodes the core semantic content (e.g., gas pipe repairs).  
+- $\vec{e}_i$: Embeddings for $F$ structured features derived from the corpus, such as $\vec{e}_{\text{pressure}}$, $\vec{e}_{\text{corrosion}}$, or $\vec{e}_{\text{damage}}$.  
+- $\vec{r}_j$: Residual embeddings for tokens outside the structured features. The residual component is labeled as such because we assume that the tokens in $\vec{r}$ shaped the $\vec{e}$ they were associated with, thanks to the attention mechanism.
+
+In our documents, the primary meaningful contributions to $\vec{v}$ come from $\vec{\text{CLS}}$ and $\vec{e}_i$, while the residual component $\sum_{j=1}^{t-F-1}\gamma_j \vec{r}_j$ adds less significant information.
+By expliciting cls and mean pooling sentence embedding:
+1. **CLS Pooling**: $\vec{d}_{\text{CLS}} = \vec{\text{CLS}}$
+2. **Mean Pooling**: $
+\vec{d}_{\text{Mean}} = \frac{1}{t + 1} \vec{\text{CLS}} + \frac{1}{t + 1}\sum_{i=1}^{t} \vec{token}_i $
+Mean pooling seems to align more to our ideal model. Thus, we argue that it may be worth to seek for a learnable pooling matrix in such scenario, if mean pooling appears to be clearly superior to CLS 
 
 ## Data
 Data regards damaged gas pipe repaired through Patch Madflex®, a new material developed by Composite Research (CoRe) and tested by ItalGas.
@@ -70,18 +114,3 @@ _non-patchable_ (-) :
     Sheared linear lesion at user connections, polyethylene material, no strong corrosion, and no high-pressure in the pipe. There is a branch near the break, but the pipe is not covered by a wall and does not have any valves nearby. No ribs are present.
 
 Is worth to notice that summaries **does not mention** whether the damage had been successfully repaired or not.
-
-We claim that tabular origin and  task-specificity make the corpus' vocabulary small. To prove our hypothesis, we compare `Summary` with a general-purpose corpus such as Common Crawl.  We sample _n = |`Summary`|_ documents from [Common Crawl - News](https://huggingface.co/datasets/vblagoje/cc_news) (CC-News) to prove our hypothesis.  We are interested in quantifying the level of _ lexical diversity_ within corpora. To do so, we define **lexical entropy** of a corpus D having vocabulary $V_D$ as follows:
-
-$$H(D) = -\sum_{t \in V_D}p_tlog(p_t) =  \sum_{t \in V_D} idf(t,D)e^{-idf(t,D)}$$
-$$p_t = \frac{|\{d \in D, d :  t \in d\}|}{|D|} = e^{-idf(t,D)}$$
-
-Results in the table below confirms our intuition: the diversity in CC-News is 10 times larger than our corpus. 
-
-|metrics|common\_crawl\_downsampled|gas|
-|---|---|---|
-|&#124;V&#124;|101993|2556|
-|&#124;D&#124;|11904|11904|
-|avg\_d\_length|395|70|
-|avg\_idf|8\.92|7\.95|
-|H\(D\)|346|42\.4|
