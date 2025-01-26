@@ -1,4 +1,4 @@
-# Retrieval-Augmented Generation in a Low Lexicon Variability Setting
+# Retrieval-Augmented Generation in a Low Lexicon Variety Setting
 _Abstract_ (to be completed)
 
 Retrieval-Augmented Generation (RAG) has demonstrated its effectiveness in tasks requiring precise information retrieval combined with text generation. This paper investigates its application in low lexicon variety settings, where document vocabularies are highly similar across the corpus. Using a dataset of synthetic damage descriptions for gas pipe repairs, we explore how RAG can address the classification of patchable versus non-patchable damages. Our methodology formalizes lexicon diversity and introduces a novel document representation model tailored to low-entropy corpora.
