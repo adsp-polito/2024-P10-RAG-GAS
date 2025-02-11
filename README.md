@@ -14,8 +14,6 @@ This repository contains the implementation of our study on Retrieval-Augmented 
 Our work introduces a new lexical entropy metric to quantify textual diversity and proposes [+]EXPL, a data re-balancing technique that improves retrieval effectiveness in highly imbalanced datasets. The retrieval system is based on SBERT-NLI embeddings, while Mistral7B serves as the generative model for classification.
 
 ## Features
----
-
 - Implements **Retrieval-Augmented Generation (RAG)** for classification.
 - Introduces **Corpus Lexical Entropy** as a diversity metric.
 - Uses **FAISS** for fast retrieval of similar cases.
@@ -23,37 +21,6 @@ Our work introduces a new lexical entropy metric to quantify textual diversity a
 - Integrates **Mistral7B** for classification.
 - Proposes **[+]EXPL**, a downsampling strategy to mitigate class imbalance.
 
-
-## Methodology
-### Mathematical Formulation
-The retrieval and classification processes follow these key steps:
-
-Encoding: Documents and queries are embedded into a vector space using SBERT-NLI.
-Retrieval: FAISS retrieves the top-k most similar cases using the dot product as a similarity metric.
-Generation: Mistral7B processes the retrieved examples and classifies the query as either patchable (YES) or non-patchable (NO).
-Mathematically, the retrieval function selects k nearest documents:
-
-___
-
-where 
-e is the encoder function and 
-s is the similarity function.
-
-Corpus Lexical Entropy
-We define Corpus Lexical Entropy as a measure of term diversity across the corpus:
-
-____
-
-where H(t) is the Shannon entropy of term t, capturing its distribution across documents.
-
-### Retriever
-The retrieval system is built upon:
-
-Embedding function: SBERT-NLI
-Similarity metric: Internal dot product
-Memory selection: FAISS for fast indexing
-Decoder
-The decoder (θ) is selected based on its ability to classify gas pipe damage. Mistral7B is chosen for its strong domain knowledge and few-shot learning capabilities.
 
 ## Experiments
 Data
