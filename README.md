@@ -1,19 +1,4 @@
 # Retrieval-Augmented Generation in a Low Lexical Diversity Scenario
-## Table of Contents
-Introduction
-Features
-Methodology
-Mathematical Formulation
-Corpus Lexical Entropy
-Retriever
-Decoder
-Experiments
-Data
-Evaluation Metrics
-Results
-Conclusion
-References
-
 ## Table of Contents  
 - [Introduction](#introduction)  
 - [Features](#features)  
