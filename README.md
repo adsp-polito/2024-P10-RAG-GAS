@@ -21,7 +21,7 @@ Our work introduces a new lexical entropy metric to quantify textual diversity a
 
 ## Methodology
 
-### Mathematical Formulation
+#### Mathematical Formulation
 
 The retrieval and classification processes follow these key steps:
 
