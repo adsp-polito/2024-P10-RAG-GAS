@@ -21,7 +21,7 @@ Our work introduces a new lexical entropy metric to quantify textual diversity a
 
 ## Methodology
 
-#### Mathematical Formulation
+#### Mathematical Formulation-
 
 The retrieval and classification processes follow these key steps:
 
@@ -41,7 +41,7 @@ where:
 - \( M \) is the **retrieval memory**.
 - \( q \) is the **input query**.
 
-#### Corpus Lexical Entropy
+#### Corpus Lexical Entropy-
 
 We define **Corpus Lexical Entropy** as a measure of term diversity across the corpus:
 
@@ -49,7 +49,7 @@ $$
 H(VD) = \sum_{t \in VD} H(t)
 $$
 
-#### Retriever
+#### Retriever-
 
 The retrieval system consists of the following components:
 
@@ -57,22 +57,22 @@ The retrieval system consists of the following components:
 - **Similarity metric (s)**: The internal **dot product** is used to measure document similarity.
 - **Memory selection (M)**: FAISS is leveraged for efficient retrieval.
 
-#### Decoder
+#### Decoder-
 
 The decoder (θ) is selected based on its ability to classify gas pipe damage. Mistral7B is chosen for its strong domain knowledge and few-shot learning capabilities.
 
 ## Experiments
 
-#### Data
+#### Data-
 
 The dataset consists of **11,904 cases** describing gas pipe damage conditions, with only **1.06%** being patchable. We apply **stratified sampling** to create training and test sets.
 
-#### Evaluation Metrics
+#### Evaluation Metrics-
 
 - **F1-Macro score** to balance class imbalance effects.
 - **Self-Consistency score (SC)** to measure model stability.
 
-#### Results
+#### Results-
 
 - **SBERT-NLI outperformed MPNet** in retrieval, demonstrating better recognition of subtle logical cues (e.g., negations, pressure levels).
 - **Mistral7B achieved 0.68 F1-Macro in zero-shot classification**, improving to **0.87 with retrieval augmentation (RAG-[+]EXPL, k=9)**.
@@ -86,7 +86,7 @@ This work demonstrates that **Retrieval-Augmented Generation (RAG) is effective 
 - **Mistral7B performs well with few-shot learning**, especially when **[+]EXPL improves retrieval quality**.
 - **Fine-tuning was intentionally avoided** to maintain generalizability to human-written texts.
 
-#### Future Directions
+#### Future Directions-
 
 - **Combining SBERT and MPNet** for hybrid retrieval.
 - **Evaluating the model on real-world, multilingual datasets**.
