@@ -115,14 +115,7 @@ _Retrieval-augmented generation for knowledge-intensive NLP tasks._ 2021.
 _Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks._  
 Proceedings of EMNLP, 2019.  
 
-[4] Claude Shannon.  
-_A Mathematical Theory of Communication._  
-The Bell System Technical Journal, 1948.  
-
-
-
-
-
+##(MICHELE HAVE A LOOK)
 # Retrieval-Augmented Generation in a Low Lexical Diversity Scenario
 ## Abstract
 
