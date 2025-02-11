@@ -101,12 +101,24 @@ This work demonstrates that **Retrieval-Augmented Generation (RAG) is effective 
 - **Evaluating the model on real-world, multilingual datasets**.
 - **Incorporating explanations in the output.**
 
-
 ## References
-- Banghao Chen et al., "Unleashing the potential of prompt engineering in large language models," arXiv:2310.14735 (2023).
-- Patrick Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks," (2021).
-- Nils Reimers and Iryna Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," EMNLP (2019).
-- Claude Shannon, "A Mathematical Theory of Communication," The Bell System Technical Journal (1948).
+
+[1] Banghao Chen, Zhaofeng Zhang, Nicolas Langrené, and Shengxin Zhu.  
+_Unleashing the potential of prompt engineering in large language models: a comprehensive review._  
+arXiv preprint arXiv:2310.14735, 2023.  
+
+[2] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal,  
+Heinrich Küttler, Mike Lewis, Wen tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela.  
+_Retrieval-augmented generation for knowledge-intensive NLP tasks._ 2021.  
+
+[3] Nils Reimers and Iryna Gurevych.  
+_Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks._  
+Proceedings of EMNLP, 2019.  
+
+[4] Claude Shannon.  
+_A Mathematical Theory of Communication._  
+The Bell System Technical Journal, 1948.  
+
 
 
 
