@@ -21,6 +21,112 @@ Our work introduces a new lexical entropy metric to quantify textual diversity a
 - Integrates **Mistral7B** for classification.
 - Proposes **[+]EXPL**, a downsampling strategy to mitigate class imbalance.
 
+## Methodology
+
+### Mathematical Formulation
+
+The retrieval and classification processes follow these key steps:
+
+1. **Encoding:** Documents and queries are embedded into a vector space using **SBERT-NLI**.
+2. **Retrieval:** **FAISS** retrieves the top-**k** most similar cases using the dot product as a similarity metric.
+3. **Generation:** **Mistral7B** processes the retrieved examples and classifies the query as either **patchable (YES)** or **non-patchable (NO)**.
+
+The retrieval function selects **k** nearest documents:
+
+$$
+Re_{s,k,M} (q) = \arg\max_{N \subseteq M, |N| = k} \sum_{d \in N} s(e(q), e(d))
+$$
+
+where:
+- \( e \) is the **encoder function** mapping documents to a vector space.
+- \( s \) is the **similarity function** (dot product in this case).
+- \( M \) is the **retrieval memory**.
+- \( q \) is the **input query**.
+
+---
+
+### Corpus Lexical Entropy
+
+We define **Corpus Lexical Entropy** as a measure of term diversity across the corpus:
+
+$$
+H(VD) = \sum_{t \in VD} H(t)
+$$
+
+where the **Shannon entropy** of a term \( t \) is:
+
+$$
+H(t) = p_t \log_2 \left(\frac{1}{p_t}\right) + (1 - p_t) \log_2 \left(\frac{1}{1 - p_t}\right)
+$$
+
+- \( p_t \) is the **probability of term \( t \) appearing in a document**.
+- A term that appears in **all documents** contributes **zero entropy**, making this metric robust to stopwords.
+
+---
+
+### Retriever
+
+The retrieval system consists of the following components:
+
+- **Embedding function (\( e \))**: **SBERT-NLI** is selected as the best embedding model based on retrieval effectiveness.
+- **Similarity metric (\( s \))**: The internal **dot product** is used to measure document similarity.
+- **Memory selection (\( M \))**: FAISS is leveraged for efficient retrieval.
+
+The retrieval process involves searching the **top-k nearest neighbors** to the query, using:
+
+$$
+Re_{s,k,M} (q) = \arg\max_{N \subseteq M, |N| = k} \sum_{d \in N} s(e(q), e(d))
+$$
+
+---
+
+### Decoder
+
+The decoder (\( \theta \)) is responsible for classifying queries based on retrieval results. It takes as input:
+
+- The **query** (\( q \))
+- The **retrieved documents** (\( N^*_{q,k} \))
+- **Domain knowledge** encoded in the model \( \theta \)
+
+The classification is modeled as a **Bernoulli distribution**, where \( L \) is a binary variable representing patchability:
+
+$$
+L \sim B(p), \quad p = P_{\theta}(L = 1 | q, N^*_{q,k})
+$$
+
+where:
+- \( p \) is the **probability of patchability**, estimated by **Mistral7B**.
+- \( N^*_{q,k} \) is the set of **retrieved top-k examples**.
+
+---
+
+### [+]EXPL: Positive Explosion Algorithm
+
+To mitigate class imbalance, we introduce **[+]EXPL**, a **downsampling technique** that removes negative samples **too close** to positive ones.
+
+1. Compute the **average L2 norm distance** between positive cases and their nearest negative neighbors:
+
+$$
+r_k = \frac{1}{|M^+|} \sum_{p \in M^+} \sum_{n \in N^*_{p,k}^-} || e_p - e_n ||_2
+$$
+
+2. Select the **explosion radius** \( r_{EXPL} \) where the **rate of change** in \( r_k \) is **maximal**:
+
+$$
+r_{EXPL} := \max_{k \in K \setminus \{1\}} \left( \frac{r_{k-1} + r_k}{2} \right)
+$$
+
+where \( K = \{1, \dots, 11\} \).
+
+This ensures that **negative cases near positive ones are removed**, helping **Mistral7B** focus on distinguishing patchable cases more effectively.
+
+---
+
+This structured methodology section is **fully GitHub-compatible** with **LaTeX-style equations**, **clean formatting**, and **clear explanations**.
+
+Let me know if you need any modifications! 🚀
+
+
 
 ## Experiments
 Data
