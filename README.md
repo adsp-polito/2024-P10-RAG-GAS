@@ -1,4 +1,100 @@
 # Retrieval-Augmented Generation in a Low Lexical Diversity Scenario
+## Table of Contents
+Introduction
+Features
+Methodology
+Mathematical Formulation
+Corpus Lexical Entropy
+Retriever
+Decoder
+Experiments
+Data
+Evaluation Metrics
+Results
+Conclusion
+References
+
+## Introduction
+This repository contains the implementation of our study on Retrieval-Augmented Generation (RAG) in a low lexical diversity setting, specifically for classifying gas pipe damage descriptions based on their patchability.
+
+Our work introduces a new lexical entropy metric to quantify textual diversity and proposes [+]EXPL, a data re-balancing technique that improves retrieval effectiveness in highly imbalanced datasets. The retrieval system is based on SBERT-NLI embeddings, while Mistral7B serves as the generative model for classification.
+
+## Features
+Implements Retrieval-Augmented Generation (RAG) for classification.
+Introduces Corpus Lexical Entropy as a diversity metric.
+Uses FAISS for fast retrieval of similar cases.
+Employs SBERT-NLI embeddings for document representation.
+Integrates Mistral7B for classification.
+Proposes [+]EXPL, a downsampling strategy to mitigate class imbalance.
+
+## Methodology
+### Mathematical Formulation
+The retrieval and classification processes follow these key steps:
+
+Encoding: Documents and queries are embedded into a vector space using SBERT-NLI.
+Retrieval: FAISS retrieves the top-k most similar cases using the dot product as a similarity metric.
+Generation: Mistral7B processes the retrieved examples and classifies the query as either patchable (YES) or non-patchable (NO).
+Mathematically, the retrieval function selects k nearest documents:
+
+___
+
+where 
+e is the encoder function and 
+s is the similarity function.
+
+Corpus Lexical Entropy
+We define Corpus Lexical Entropy as a measure of term diversity across the corpus:
+
+____
+
+where H(t) is the Shannon entropy of term t, capturing its distribution across documents.
+
+### Retriever
+The retrieval system is built upon:
+
+Embedding function: SBERT-NLI
+Similarity metric: Internal dot product
+Memory selection: FAISS for fast indexing
+Decoder
+The decoder (θ) is selected based on its ability to classify gas pipe damage. Mistral7B is chosen for its strong domain knowledge and few-shot learning capabilities.
+
+## Experiments
+Data
+The dataset consists of 11,904 cases describing gas pipe damage conditions, with only 1.06% being patchable. We apply stratified sampling to create training and test sets.
+
+Evaluation Metrics
+We use:
+
+F1-Macro score to balance class imbalance effects.
+Self-Consistency score (SC) to measure model stability.
+
+Results
+SBERT-NLI outperformed MPNet in retrieval, demonstrating better recognition of subtle logical cues (e.g., negations, pressure levels).
+Mistral7B achieved 0.68 F1-Macro in zero-shot classification, improving to 0.87 with retrieval augmentation (RAG-[+]EXPL, k=9).
+[+]EXPL significantly improved retrieval effectiveness, removing overly similar negative cases near positive ones.
+
+## Conclusion
+This work demonstrates that Retrieval-Augmented Generation (RAG) is effective in low-lexical-diversity settings. Key findings include:
+
+SBERT-NLI is the best retrieval encoder for this dataset.
+Mistral7B performs well with few-shot learning, especially when [+]EXPL improves retrieval quality.
+Fine-tuning was intentionally avoided to maintain generalizability to human-written texts.
+Future directions include:
+
+Combining SBERT and MPNet for hybrid retrieval.
+Evaluating the model on real-world, multilingual datasets.
+Incorporating explanations in the output.
+
+## References
+Banghao Chen et al., "Unleashing the potential of prompt engineering in large language models," arXiv:2310.14735 (2023).
+Patrick Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks," (2021).
+Nils Reimers and Iryna Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," EMNLP (2019).
+Claude Shannon, "A Mathematical Theory of Communication," The Bell System Technical Journal (1948).
+
+
+
+
+# Retrieval-Augmented Generation in a Low Lexical Diversity Scenario
 ## Abstract
 
 This research focuses on the application of Retrieval-Augmented Generation (RAG) in a low-lexical-diversity setting, with a focus on classifying gas pipe damage descriptions for patch applicability. To quantify lexical similarities between documents, we introduce a new metric called lexical entropy, while to address class imbalance, we propose [+]EXPL, a data re-balancing technique designed to enhance the retrieval of patchable [+] cases. K-Nearest-Neighbors guide our selection of Sentence-BERT-NLI (SBERT-NLI) as the preferred encoder, as it proves more effective than state-of-the-art models in Semantic Search by capturing crucial nuanced differences between documents. Our results show that Mistral-7B exhibits some understanding of gas leak patchability with an F1-Macro score of 0.68, which improves to 0.87 when supported by the retrieval system. Given the synthetic nature of the documents, we avoid fine-tuning due to concerns that such an approach may not generalize well to human-written descriptions, where vocabulary variety would likely be higher. Nonetheless, RAG-driven approaches show promise in semantically constrained environments.
