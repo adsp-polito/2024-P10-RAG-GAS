@@ -71,63 +71,13 @@ The retrieval system consists of the following components:
 - **Embedding function (\( e \))**: **SBERT-NLI** is selected as the best embedding model based on retrieval effectiveness.
 - **Similarity metric (\( s \))**: The internal **dot product** is used to measure document similarity.
 - **Memory selection (\( M \))**: FAISS is leveraged for efficient retrieval.
-
-The retrieval process involves searching the **top-k nearest neighbors** to the query, using:
-
-$$
-Re_{s,k,M} (q) = \arg\max_{N \subseteq M, |N| = k} \sum_{d \in N} s(e(q), e(d))
-$$
-
 ---
 
 ### Decoder
 
-The decoder (\( \theta \)) is responsible for classifying queries based on retrieval results. It takes as input:
-
-- The **query** (\( q \))
-- The **retrieved documents** (\( N^*_{q,k} \))
-- **Domain knowledge** encoded in the model \( \theta \)
-
-The classification is modeled as a **Bernoulli distribution**, where \( L \) is a binary variable representing patchability:
-
-$$
-L \sim B(p), \quad p = P_{\theta}(L = 1 | q, N^*_{q,k})
-$$
-
-where:
-- \( p \) is the **probability of patchability**, estimated by **Mistral7B**.
-- \( N^*_{q,k} \) is the set of **retrieved top-k examples**.
+The decoder (θ) is selected based on its ability to classify gas pipe damage. Mistral7B is chosen for its strong domain knowledge and few-shot learning capabilities.
 
 ---
-
-### [+]EXPL: Positive Explosion Algorithm
-
-To mitigate class imbalance, we introduce **[+]EXPL**, a **downsampling technique** that removes negative samples **too close** to positive ones.
-
-1. Compute the **average L2 norm distance** between positive cases and their nearest negative neighbors:
-
-$$
-r_k = \frac{1}{|M^+|} \sum_{p \in M^+} \sum_{n \in N^*_{p,k}^-} || e_p - e_n ||_2
-$$
-
-2. Select the **explosion radius** \( r_{EXPL} \) where the **rate of change** in \( r_k \) is **maximal**:
-
-$$
-r_{EXPL} := \max_{k \in K \setminus \{1\}} \left( \frac{r_{k-1} + r_k}{2} \right)
-$$
-
-where \( K = \{1, \dots, 11\} \).
-
-This ensures that **negative cases near positive ones are removed**, helping **Mistral7B** focus on distinguishing patchable cases more effectively.
-
----
-
-This structured methodology section is **fully GitHub-compatible** with **LaTeX-style equations**, **clean formatting**, and **clear explanations**.
-
-Let me know if you need any modifications! 🚀
-
-
-
 ## Experiments
 Data
 The dataset consists of 11,904 cases describing gas pipe damage conditions, with only 1.06% being patchable. We apply stratified sampling to create training and test sets.
