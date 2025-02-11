@@ -6,8 +6,6 @@
 - [Experiments](#experiments)   
 - [Conclusion](#conclusion)   
 - [References](#references)  
-
-
 ## Introduction
 This repository contains the implementation of our study on Retrieval-Augmented Generation (RAG) in a low lexical diversity setting, specifically for classifying gas pipe damage descriptions based on their patchability.
 
