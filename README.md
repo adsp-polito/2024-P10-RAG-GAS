@@ -49,15 +49,6 @@ $$
 H(VD) = \sum_{t \in VD} H(t)
 $$
 
-where the **Shannon entropy** of a term \( t \) is:
-
-$$
-H(t) = p_t \log_2 \left(\frac{1}{p_t}\right) + (1 - p_t) \log_2 \left(\frac{1}{1 - p_t}\right)
-$$
-
-- \( p_t \) is the **probability of term \( t \) appearing in a document**.
-- A term that appears in **all documents** contributes **zero entropy**, making this metric robust to stopwords.
-
 #### Retriever
 
 The retrieval system consists of the following components:
