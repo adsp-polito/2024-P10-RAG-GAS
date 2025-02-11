@@ -79,37 +79,44 @@ The decoder (θ) is selected based on its ability to classify gas pipe damage. M
 
 ---
 ## Experiments
-Data
-The dataset consists of 11,904 cases describing gas pipe damage conditions, with only 1.06% being patchable. We apply stratified sampling to create training and test sets.
 
-Evaluation Metrics
-We use:
+### Data
 
-F1-Macro score to balance class imbalance effects.
-Self-Consistency score (SC) to measure model stability.
+The dataset consists of **11,904 cases** describing gas pipe damage conditions, with only **1.06%** being patchable. We apply **stratified sampling** to create training and test sets.
 
-Results
-SBERT-NLI outperformed MPNet in retrieval, demonstrating better recognition of subtle logical cues (e.g., negations, pressure levels).
-Mistral7B achieved 0.68 F1-Macro in zero-shot classification, improving to 0.87 with retrieval augmentation (RAG-[+]EXPL, k=9).
-[+]EXPL significantly improved retrieval effectiveness, removing overly similar negative cases near positive ones.
+### Evaluation Metrics
+
+- **F1-Macro score** to balance class imbalance effects.
+- **Self-Consistency score (SC)** to measure model stability.
+
+### Results
+
+- **SBERT-NLI outperformed MPNet** in retrieval, demonstrating better recognition of subtle logical cues (e.g., negations, pressure levels).
+- **Mistral7B achieved 0.68 F1-Macro in zero-shot classification**, improving to **0.87 with retrieval augmentation (RAG-[+]EXPL, k=9)**.
+- **[+]EXPL significantly improved retrieval effectiveness**, removing overly similar negative cases near positive ones.
+
+---
 
 ## Conclusion
-This work demonstrates that Retrieval-Augmented Generation (RAG) is effective in low-lexical-diversity settings. Key findings include:
 
-SBERT-NLI is the best retrieval encoder for this dataset.
-Mistral7B performs well with few-shot learning, especially when [+]EXPL improves retrieval quality.
-Fine-tuning was intentionally avoided to maintain generalizability to human-written texts.
-Future directions include:
+This work demonstrates that **Retrieval-Augmented Generation (RAG) is effective in low-lexical-diversity settings**. Key findings include:
 
-Combining SBERT and MPNet for hybrid retrieval.
-Evaluating the model on real-world, multilingual datasets.
-Incorporating explanations in the output.
+- **SBERT-NLI is the best retrieval encoder** for this dataset.
+- **Mistral7B performs well with few-shot learning**, especially when **[+]EXPL improves retrieval quality**.
+- **Fine-tuning was intentionally avoided** to maintain generalizability to human-written texts.
+
+### Future Directions
+
+- **Combining SBERT and MPNet** for hybrid retrieval.
+- **Evaluating the model on real-world, multilingual datasets**.
+- **Incorporating explanations in the output.**
+
 
 ## References
-Banghao Chen et al., "Unleashing the potential of prompt engineering in large language models," arXiv:2310.14735 (2023).
-Patrick Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks," (2021).
-Nils Reimers and Iryna Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," EMNLP (2019).
-Claude Shannon, "A Mathematical Theory of Communication," The Bell System Technical Journal (1948).
+- Banghao Chen et al., "Unleashing the potential of prompt engineering in large language models," arXiv:2310.14735 (2023).
+- Patrick Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks," (2021).
+- Nils Reimers and Iryna Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," EMNLP (2019).
+- Claude Shannon, "A Mathematical Theory of Communication," The Bell System Technical Journal (1948).
 
 
 
